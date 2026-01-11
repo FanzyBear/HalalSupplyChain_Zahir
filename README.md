@@ -31,4 +31,10 @@ Then Connect the Wallet to local host and Play around witho our Halal Supply Cha
 ### Why Docker?
 Because of the "it works on my machine" bs. Now the whole dapps in one box that just works the same everywhere.
 
+## Test Case
+It proves that:
+1. Role-based access control works (farmer can create, slaugtherer can slaugther + certify, etc.)
+2. The whole supply chain works correctly ( create - slaughter + halal - distribute - retail)
+3. unregistered users are blocked from acess workers features
 
+![alt text](redme.img\image.png)
