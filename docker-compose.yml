@@ -1,0 +1,27 @@
+services:
+  hardhat:
+    stdin_open: true
+    tty: true
+    init: true
+    build:
+      context: ./hardhat
+      dockerfile: Dockerfile.hardhat
+    image: zahir-hardhat:latest
+    volumes:
+      - ./hardhat:/app
+    command: bash -c "npx hardhat node"
+    ports:
+      - "8545:8545"
+  dapp:
+    stdin_open: true
+    tty: true
+    init: true
+    build:
+        context: ./dapp
+        dockerfile: Dockerfile.dapp
+    image: zahir-dapp:latest
+    volumes:
+      - ./dapp:/app
+    command: bash -c "npm install -g serve && serve -s . -l 3000"
+    ports:
+      - "3000:3000"
