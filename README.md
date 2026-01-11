@@ -19,4 +19,16 @@ Then Connect the Wallet to local host and Play around witho our Halal Supply Cha
 
 ## Zahir Features
 
--
+- Role-Based Access Control
+- Batch Creation (Farmer Only)
+- Full Supply Chain Tracking
+- Slaughterer + Halal Certification
+- Consumer-Facing Transparent Tracking
+- QR Code 
+- Security
+- User Experience Features
+
+### Why Docker?
+Because of the "it works on my machine" bs. Now the whole dapps in one box that just works the same everywhere.
+
+
