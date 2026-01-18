@@ -22,74 +22,17 @@
         </div>
       </div>
     </div>
-    <div class="consumer">
-      <div class="consumer-container">
-        <div class="consumer-block">
-          <div class="batch-status"><p>Retail Ready</p></div>
-          <div class="block-details">
-            <p class="updated-by">Lorem, ipsum.</p>
-            <p class="timestamp">12345</p>
-            <p class="location">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </p>
-            <p class="content">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-              Repellendus, accusamus eius sunt doloremque quos inventore!
-            </p>
-          </div>
+    <div class="activity-feed">
+      <div class="activity-container">
+        <h2>📊 Recent Blockchain Activity</h2>
+        <p class="activity-subtitle">Live feed from the supply chain</p>
+        <div id="activityList" class="activity-list">
+          <p class="loading">Loading recent activities...</p>
         </div>
-        <div class="consumer-chain"></div>
-        <div class="consumer-block">
-          <div class="batch-status"><p>Retail Ready</p></div>
-          <div class="block-details">
-            <p class="updated-by">Lorem, ipsum.</p>
-            <p class="timestamp">12345</p>
-            <p class="location">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </p>
-            <p class="content">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-              Repellendus, accusamus eius sunt doloremque quos inventore!
-            </p>
-          </div>
-        </div>
-        <div class="consumer-chain"></div>
-        <div class="consumer-block">
-          <div class="batch-status"><p>Retail Ready</p></div>
-          <div class="block-details">
-            <p class="updated-by">Lorem, ipsum.</p>
-            <p class="timestamp">12345</p>
-            <p class="location">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </p>
-            <p class="content">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-              Repellendus, accusamus eius sunt doloremque quos inventore!
-            </p>
-          </div>
-        </div>
-        <div class="consumer-chain"></div>
-        <div class="consumer-block">
-          <div class="batch-status"><p>Retail Ready</p></div>
-          <div class="block-details">
-            <p class="updated-by">Lorem, ipsum.</p>
-            <p class="timestamp">12345</p>
-            <p class="location">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </p>
-            <p class="content">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-              Repellendus, accusamus eius sunt doloremque quos inventore!
-            </p>
-          </div>
-        </div>
-        <!--         
-        <div class="consumer-block"></div>
-        <div class="consumer-chain"></div>
-        <div class="consumer-block"></div>
-        <div class="consumer-chain"></div>
-        <div class="consumer-block"></div> -->
       </div>
+    </div>
+    <div class="consumer">
+      <div class="consumer-container"></div>
     </div>
     <div class="worker">
       <div class="worker-container">
@@ -107,12 +50,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script> -->
     <script src="./script.js"></script>
     <script src="./farmer.js"></script>
     <script src="./slaughterer.js"></script>
     <script src="./distributor.js"></script>
     <script src="./retailer.js"></script>
     <script src="./consumer.js"></script>
+    <script src="./events.js"></script>
   </body>
 </html>

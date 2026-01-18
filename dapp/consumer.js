@@ -11,7 +11,7 @@ consumerBtn.addEventListener("click", async () => {
     // Not on batch page - show instructions
     showConsumerInstructions();
   } else {
-    // On batch page - load tracking
+    // STAR - batch page - load tracking
     await loadConsumerTracking(currentBatchId);
   }
 
@@ -37,7 +37,8 @@ function showConsumerInstructions() {
   }
 }
 
-// Load and display tracking for a batch
+// ------------------------------------
+// STAR - Load and display tracking for a batch
 async function loadConsumerTracking(batchId) {
   const consumerContainer = document.querySelector(".consumer-container");
 
@@ -51,7 +52,8 @@ async function loadConsumerTracking(batchId) {
   `;
 
   try {
-    // Fetch all flows
+    // **----------------------------------
+    // STAR SOL - Calling getAllFlows to Fetch all flows
     const flows = await contract.methods.getAllFlows(batchId).call();
 
     if (!flows || flows.length === 0) {
@@ -59,7 +61,8 @@ async function loadConsumerTracking(batchId) {
       return;
     }
 
-    // Fetch halal certification
+    // **----------------------------------
+    // STAR SOL - Calling verifyHalalCertifiaction to Fetch halal certification
     const halalInfo = await contract.methods
       .verifyHalalCertification(batchId)
       .call();
@@ -72,11 +75,12 @@ async function loadConsumerTracking(batchId) {
     header.className = "consumer-header";
     header.innerHTML = `
       <h2>Batch #${batchId}</h2>
-      <p>Complete Supply Chain Journey</p>
+      <p>Complete Zahir Supply Chain Journey</p>
     `;
     consumerContainer.appendChild(header);
 
-    // Display each flow as a block
+    // ------------------------------------
+    // STAR - Display each flow as a block
     flows.forEach((flow, index) => {
       // Create flow block
       const block = createFlowBlock(flow, index);
@@ -90,7 +94,8 @@ async function loadConsumerTracking(batchId) {
       }
     });
 
-    // Add halal certification if certified
+    // ------------------------------------
+    // STAR - Add halal certification if certified
     if (halalInfo.isHalalCertified) {
       // Add final chain connector
       const finalChain = document.createElement("div");

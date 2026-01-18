@@ -1,175 +1,3 @@
-// // RETAILER
-// function setupRetailerFunctionality(userAddress) {
-//   // If retailer not in the batch page (home page)
-//   if (!isBatchPage) {
-//     console.log(!isBatchPage);
-//     disableRetailerMainPage();
-//     return;
-//   }
-
-//   function disableRetailerMainPage() {
-//     const dashboardContentCreate = document.querySelector(
-//       ".dashboard-content-create"
-//     );
-//     dashboardContentCreate.style.display = "none";
-
-//     const dashboardContent = document.querySelector(".dashboard-content");
-//     if (dashboardContent) {
-//       dashboardContent.innerHTML = `
-//       <div class="main-page-notice">
-//         <p>To mark a batch as retail ready, you need to:</p>
-//         <ol>
-//           <li>Get a QR code from a distributor</li>
-//           <li>Scan the QR code with your phone camera</li>
-//           <li>You'll be redirected to the batch page</li>
-//           <li>Fill the retailer form</li>
-//         </ol>
-//         <p class="note">Note: You can only mark each batch as retail ready once.</p>
-//       </div>
-//     `;
-//     }
-//   }
-
-//   // If retailer is in the batch page, check status
-//   checkBatchStatusForRetail(userAddress);
-// }
-
-// // Check if batch is ready for retail
-// async function checkBatchStatusForRetail(userAddress) {
-//   try {
-//     // Get batch status
-//     const batchInfo = await contract.methods
-//       .getBatchStatus(currentBatchId)
-//       .call();
-//     const status = Number(batchInfo.status);
-
-//     console.log("Batch status for retail:", status);
-
-//     // Check if batch is already retail ready
-//     if (status >= 3) {
-//       // 3 = Retail Ready
-//       disableRetailerForms("This batch is already marked as retail ready.");
-//       return;
-//     }
-
-//     // Check if batch is distributed (status 2)
-//     if (status === 2) {
-//       // Ready for retail
-//       enableRetailerForms(userAddress);
-//     } else if (status === 1) {
-//       disableRetailerForms("Batch is slaughtered but not distributed yet.");
-//     } else if (status === 0) {
-//       disableRetailerForms("Batch is not slaughtered yet.");
-//     } else {
-//       disableRetailerForms("Batch is not ready for retail.");
-//     }
-//   } catch (error) {
-//     console.error("Error checking batch status:", error);
-//     disableRetailerForms("Error loading batch information.");
-//   }
-// }
-
-// // Enable forms and setup event listeners
-// function enableRetailerForms(userAddress) {
-//   const retailerForm = document.getElementById("retailerForm");
-
-//   if (retailerForm) {
-//     retailerForm.addEventListener("submit", async (event) => {
-//       event.preventDefault();
-//       await addRetailerFlow(userAddress);
-//     });
-//   }
-
-//   // Show batch info
-//   const dashboardContent = document.querySelector(".dashboard-content");
-//   if (dashboardContent) {
-//     const batchInfoDiv = document.createElement("div");
-//     batchInfoDiv.className = "batch-info-retailer";
-//     batchInfoDiv.innerHTML = `
-//       <h4>Preparing Batch #${currentBatchId} for Retail</h4>
-//       <p>Status: Distributed ✓</p>
-//       <p class="warning">⚠️ You can only mark this batch as retail ready once.</p>
-//     `;
-//     dashboardContent.insertBefore(batchInfoDiv, dashboardContent.firstChild);
-//   }
-// }
-
-// // Disable forms with message
-// function disableRetailerForms(message) {
-//   const retailerForm = document.getElementById("retailerForm");
-
-//   // Disable all form inputs
-//   const allForms = document.querySelectorAll(
-//     "#retailerForm input, #retailerForm textarea, #retailerForm button"
-//   );
-//   allForms.forEach((input) => {
-//     input.disabled = true;
-//   });
-
-//   // Add disabled message
-//   const dashboardContent = document.querySelector(".dashboard-content");
-//   if (dashboardContent) {
-//     // Clear existing content and show message
-//     dashboardContent.innerHTML = `
-//       <div class="disabled-notice">
-//         <h4>Form Disabled</h4>
-//         <p>${message}</p>
-//         ${isBatchPage ? `<p>Batch ID: ${currentBatchId}</p>` : ""}
-//       </div>
-//     `;
-//   }
-// }
-
-// // Add retailer flow
-// async function addRetailerFlow(userAddress) {
-//   if (!currentBatchId && currentBatchId !== 0) {
-//     alert("No batch ID found");
-//     return;
-//   }
-
-//   const location = document.getElementById("retailerLocation").value;
-//   const content = document.getElementById("retailerContent").value;
-
-//   if (!location) {
-//     alert("Please enter store location");
-//     return;
-//   }
-
-//   try {
-//     const button = document.querySelector("#retailerForm button");
-//     const originalText = button.textContent;
-//     button.textContent = "Processing...";
-//     button.disabled = true;
-
-//     // Call the retailer function
-//     await contract.methods
-//       .addRetailerFlow(currentBatchId, location, content || "")
-//       .send({ from: userAddress })
-//       .on("transactionHash", (hash) => {
-//         console.log("Retail transaction hash:", hash);
-//       })
-//       .on("receipt", (receipt) => {
-//         alert("✅ Retail flow added! Batch is now ready for sale.");
-//         button.textContent = originalText;
-//         button.disabled = false;
-
-//         // Clear form
-//         document.getElementById("retailerLocation").value = "";
-//         document.getElementById("retailerContent").value = "";
-
-//         // Update UI - disable forms since retail is done
-//         disableRetailerForms("Batch marked as retail ready.");
-//       })
-//       .on("error", (error) => {
-//         alert("Error: " + error.message);
-//         button.textContent = originalText;
-//         button.disabled = false;
-//       });
-//   } catch (error) {
-//     alert("Error: " + error.message);
-//   }
-// }
-
 // RETAILER
 function setupRetailerFunctionality(userAddress) {
   // Main page - show instructions
@@ -178,7 +6,8 @@ function setupRetailerFunctionality(userAddress) {
     return;
   }
 
-  // Batch page - check status
+  // ------------------------------------
+  // STAR - If in batch page, check status of distributor before
   checkBatchStatusForRetail(userAddress);
 }
 
@@ -200,8 +29,12 @@ function showRetailerInstructions() {
   }
 }
 
+// ------------------------------------
+// STAR - If in batch page, check status of distributor before
 async function checkBatchStatusForRetail(userAddress) {
   try {
+    // **----------------------------------
+    // STAR SOL - Calling getBatchStatus
     const batchInfo = await contract.methods
       .getBatchStatus(currentBatchId)
       .call();
@@ -215,7 +48,8 @@ async function checkBatchStatusForRetail(userAddress) {
         "This batch is already marked as retail ready."
       );
     } else if (status === 2) {
-      // Ready for retail
+      // ------------------------------------
+      // STAR - Retailer can then fill their form
       enableRetailerForms(userAddress);
     } else if (status === 1) {
       showRetailerDisabledMessage(
@@ -232,12 +66,14 @@ async function checkBatchStatusForRetail(userAddress) {
   }
 }
 
+// ------------------------------------
+// STAR - Retailer can then fill their form
 function enableRetailerForms(userAddress) {
   const dashboardContent = document.querySelector(".dashboard-content");
 
   // Add batch info header
   const batchInfoDiv = document.createElement("div");
-  batchInfoDiv.className = "batch-info-slaughterer";
+  batchInfoDiv.className = "batch-info";
   batchInfoDiv.innerHTML = `
     <h4>Preparing Batch #${currentBatchId} for Retail</h4>
     <p>Status: Distributed ✓</p>
@@ -250,12 +86,53 @@ function enableRetailerForms(userAddress) {
   if (retailerForm) {
     retailerForm.addEventListener("submit", async (event) => {
       event.preventDefault();
+
+      // ------------------------------------
+      // STAR - Retailer form
       await addRetailerFlow(userAddress);
     });
   }
 }
 
-function showRetailerDisabledMessage(message) {
+async function showRetailerDisabledMessage(message) {
+  const dashboardContent = document.querySelector(".dashboard-content");
+  if (!dashboardContent) return;
+
+  let etherscanLink = "";
+
+  // If batch is retail ready, get transaction hash
+  if (message.includes("retail ready") && currentBatchId !== null) {
+    try {
+      const events = await contract.getPastEvents("BatchUpdated", {
+        filter: { batchId: currentBatchId, newStatus: 3 }, // 3 = RetailReady
+        fromBlock: 0,
+        toBlock: "latest",
+      });
+
+      if (events.length > 0) {
+        const txHash = events[0].transactionHash;
+        etherscanLink = `
+          <p><a href="https://sepolia.etherscan.io/tx/${txHash}" target="_blank">
+            🔍 View transaction on Etherscan
+          </a></p>
+        `;
+      }
+    } catch (error) {
+      console.error("Error fetching transaction hash:", error);
+    }
+  }
+
+  dashboardContent.innerHTML = `
+    <div class="disabled-notice">
+      <h4>Form Disabled</h4>
+      <p>${message}</p>
+      <p>Batch ID: #${currentBatchId}</p>
+      ${etherscanLink}
+      <p><a href="${window.location.origin}${window.location.pathname}">← Back to main page</a></p>
+    </div>
+  `;
+}
+function showRetailerDisabledMessageWithTx(message, txHash) {
   const dashboardContent = document.querySelector(".dashboard-content");
   if (dashboardContent) {
     dashboardContent.innerHTML = `
@@ -263,12 +140,17 @@ function showRetailerDisabledMessage(message) {
         <h4>Form Disabled</h4>
         <p>${message}</p>
         <p>Batch ID: #${currentBatchId}</p>
+        <p><a href="https://sepolia.etherscan.io/tx/${txHash}" target="_blank">
+          🔍 View transaction on Etherscan
+        </a></p>
         <p><a href="${window.location.origin}${window.location.pathname}">← Back to main page</a></p>
       </div>
     `;
   }
 }
 
+// ------------------------------------
+// STAR - Retailer form
 async function addRetailerFlow(userAddress) {
   if (currentBatchId === null && currentBatchId !== 0) {
     alert("No batch ID found");
@@ -289,6 +171,8 @@ async function addRetailerFlow(userAddress) {
     button.textContent = "Processing...";
     button.disabled = true;
 
+    // **----------------------------------
+    // STAR SOL - Calling addRetailerFlow
     await contract.methods
       .addRetailerFlow(currentBatchId, location, content || "")
       .send({ from: userAddress })
@@ -297,11 +181,13 @@ async function addRetailerFlow(userAddress) {
       })
       .on("receipt", (receipt) => {
         console.log("Retail flow completed!");
+        const txHash = receipt.transactionHash;
         alert(`✅ Batch #${currentBatchId} is now ready for sale!`);
 
-        // Show success message
-        showRetailerDisabledMessage(
-          "This batch is now marked as retail ready."
+        // Show success message with tx hash
+        showRetailerDisabledMessageWithTx(
+          "This batch is now marked as retail ready.",
+          txHash
         );
       })
       .on("error", (error) => {

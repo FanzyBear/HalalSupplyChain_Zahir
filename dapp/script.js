@@ -1,10 +1,11 @@
 let web3;
 let contract;
-// let userAddress;
 
 let isBatchPage = false;
 let currentBatchId = null;
 
+// ------------------------------------
+// STAR - Always run this on the page to check whether it's main or batch page
 function checkPageType() {
   const urlParams = new URLSearchParams(window.location.search);
   const batchId = urlParams.get("batch");
@@ -44,13 +45,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Initialize contract
     if (contractABI && contractAddress) {
       contract = new web3.eth.Contract(contractABI, contractAddress);
+
+      // ------------------------------------
+      // STAR - Initialise Event
+      // setTimeout(() => {
+      initializeEventListeners();
+      // }, 1000);
     }
 
     const connectBtn = document.getElementById("connect-btn");
 
-    // Connect the MetaMask wallet
+    // ------------------------------------
+    // STAR - Connect the MetaMask wallet
     connectBtn.addEventListener("click", connectWallet);
-
     async function connectWallet() {
       if (window.ethereum) {
         try {
@@ -61,7 +68,8 @@ document.addEventListener("DOMContentLoaded", async function () {
           setConnected(accounts[0]);
           workerShow();
 
-          // Check if user is already registered
+          // ------------------------------------
+          // STAR - Check if user is already registered
           await checkUserRegistration(accounts[0]);
         } catch (err) {
           if (err.code === 4001) {
@@ -75,48 +83,51 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     }
 
-    // Check if user is registered
+    // ------------------------------------
+    // STAR - Check if user is registered
     async function checkUserRegistration(userAddress) {
       const workerRole = document.querySelector(".worker-role");
       const workerRoleRegister = document.querySelector(
         ".worker-role-register"
       );
       try {
-        // Call the public mapping `users`
+        // **----------------------------------
+        // STAR SOL - Call the public mapping `users`
         const userData = await contract.methods.users(userAddress).call();
         console.log("User data:", userData);
 
+        // **----------------------------------
+        // STAR SOL - Check if the user is registered already
         const isRegistered = userData.isRegistered;
         const roleNumber = parseInt(userData.role); // Role is returned as string/number
 
         if (isRegistered) {
           // if user is registered
-          // Hide registration buttons
-          workerRoleRegister.style.display = "none";
+          workerRoleRegister.style.display = "none"; // Hide registration buttons
 
           // Show role
           const roleName = getRoleName(roleNumber);
           workerRole.innerHTML = `<p>You are registered as <span class="text-bold">${roleName}</span></p>`;
 
-          // Update WEB UI
+          // ------------------------------------
+          // STAR - Update WORKER WEB UI based on the role
           loadRoleDashboard(roleNumber, userAddress);
         } else {
           // if user is not registered
-          // Show registration buttons
-          workerRoleRegister.style.display = "flex";
+          workerRoleRegister.style.display = "flex"; // Show registration buttons
           workerRole.innerHTML = "";
 
-          // Add event listeners to role buttons
+          // STAR - Add event listeners to role buttons for registration of role
           setupRoleButtons(userAddress);
         }
       } catch (error) {
         console.error("Error checking registration:", error);
         // if user is not registered
-        // Show registration buttons
-        workerRoleRegister.style.display = "flex";
+        workerRoleRegister.style.display = "flex"; // Show registration buttons
         workerRole.innerHTML = "";
 
-        // Add event listeners to role buttons
+        // ------------------------------------
+        // STAR - Add event listeners to role buttons for registration of role
         setupRoleButtons(userAddress);
       }
     }
@@ -133,7 +144,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       return roles[roleNumber] || "Unknown";
     }
 
-    // Setup role button click handlers
+    // ------------------------------------
+    // STAR - Setup role button click handlers for role registration
     function setupRoleButtons(userAddress) {
       const buttons = document.querySelectorAll(".worker-role-register button");
 
@@ -151,7 +163,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             const accounts = await web3.eth.getAccounts();
             const fromAddress = accounts[0];
 
-            // Call registerUser function
+            // **----------------------------------
+            // STAR SOL - Call registerUser function
             await contract.methods
               .registerUser(roleNumber)
               .send({ from: fromAddress })
@@ -169,7 +182,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 document.querySelector(".worker-role-register").style.display =
                   "none";
 
-                // Update WEB UI
+                // ------------------------------------
+                // STAR - Update WORKER WEB UI based on the role
                 loadRoleDashboard(roleNumber, userAddress);
               })
               .on("error", (error) => {
@@ -185,11 +199,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
       });
     }
+
+    // ------------------------------------
+    // STAR - Update WORKER WEB UI based on the role
     function loadRoleDashboard(roleNumber, userAddress) {
       let dashboardContainer = document.querySelector(".worker-dashboard");
       dashboardContainer.style.display = "flex";
       dashboardContainer.innerHTML = "";
 
+      // Check page type whether main or batch
       checkPageType();
 
       const template = roleTemplates[roleNumber];
@@ -197,6 +215,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         dashboardContainer.innerHTML = template();
       }
 
+      // ------------------------------------
+      // STAR - Actually update WORKER WEB UI based on the role
       switch (roleNumber) {
         case 1:
           setupFarmerFunctionality(userAddress);
@@ -217,20 +237,23 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 });
 
+// WEB GUI template based on roles
 const roleTemplates = {
   1: () => `
     <p>Farmer Dashboard</p>
       <div class="dashboard-content">
-        <div class="dashboard-content-create">
-          <p>Create New Batch</p>
-          <form id="createBatchForm">
-            <input type="text" id="batchLocation" placeholder="Farm Location" required>
-            <textarea id="batchContent" placeholder="Description (e.g., Chicken, Beef)"></textarea>
-            <button type="submit">Create Batch</button>
-          </form>
-        </div>
-        <div class="batch-qr">
-          <!-- QR HERE -->
+        <div class="dashboard-content-cr">
+          <div class="dashboard-content-create">
+            <p>Create New Batch</p>
+            <form id="createBatchForm">
+              <input type="text" id="batchLocation" placeholder="Farm Location" required>
+              <textarea id="batchContent" placeholder="Description (e.g., Chicken, Beef)"></textarea>
+              <button type="submit">Create Batch</button>
+            </form>
+          </div>
+          <div class="batch-qr">
+            <!-- QR HERE -->
+          </div>
         </div>
       </div>
   `,
@@ -238,21 +261,24 @@ const roleTemplates = {
   2: () => `
   <p>Slaughterer Dashboard</p>
   <div class="dashboard-content">
-    <div class="dashboard-content-create">
-      <p>Add Slaughterer Flow</p>
-      <form id="slaughterForm">
-        <input type="text" id="slaughterLocation" placeholder="Slaughterhouse Location" required>
-        <textarea id="slaughterContent" placeholder="Notes"></textarea>
-      </form>
-    </div>
-    <div class="dashboard-content-create">
-      <p>Add Halal Certificate</p>
-      <form id="halalCertificateForm">
-        <input type="text" id="supervisorName" placeholder="Supervisor Name" required>
-        <input type="text" id="halalCertificationBodyName" placeholder="Halal Body Name" required>
-        <input type="text" id="halalCertificateId" placeholder="Halal Cert ID" required>
-        <input type="number" id="slaughtererTimestamp" placeholder="Unix Timestamp (e.g., 1704067200)" required>
-      </form>
+    <div class="dashboard-content-cr">
+      <div class="dashboard-content-create">
+        <p>Add Slaughterer Flow</p>
+        <form id="slaughterForm">
+          <input type="text" id="slaughterLocation" placeholder="Slaughterhouse Location" required>
+          <textarea id="slaughterContent" placeholder="Notes"></textarea>
+        </form>
+      </div>
+      <div class="dashboard-content-create">
+        <p>Add Halal Certificate</p>
+        <form id="halalCertificateForm">
+          <input type="text" id="supervisorName" placeholder="Supervisor Name" required>
+          <input type="text" id="halalCertificationBodyName" placeholder="Halal Body Name" required>
+          <input type="text" id="halalCertificateId" placeholder="Halal Cert ID" required>
+          <label for="slaughtererTimestamp" style="color: var(--white); font-size: 14px;">Slaughter Date & Time:</label>
+          <input type="datetime-local" id="slaughtererTimestamp" required>
+        </form>
+      </div>
     </div>
   </div>
 `,
@@ -260,13 +286,15 @@ const roleTemplates = {
   3: () => `
       <p>Distributor Dashboard</p>
       <div class="dashboard-content">
-        <div class="dashboard-content-create">
-          <p>Add Distributor Flow</p>
-          <form id="distributorForm">
-            <input type="text" id="distributorLocation" placeholder="Current Location" required>
-            <textarea id="distributorContent" placeholder="Distribution Notes"></textarea>
-            <button type="submit">Add Distributor Flow</button>
-          </form>
+        <div class="dashboard-content-cr">
+          <div class="dashboard-content-create">
+            <p>Add Distributor Flow</p>
+            <form id="distributorForm">
+              <input type="text" id="distributorLocation" placeholder="Current Location" required>
+              <textarea id="distributorContent" placeholder="Distribution Notes"></textarea>
+              <button type="submit">Add Distributor Flow</button>
+            </form>
+          </div>
         </div>
       </div>
   `,
@@ -274,13 +302,15 @@ const roleTemplates = {
   4: () => `
       <p>Retailer Dashboard</p>
       <div class="dashboard-content">
-        <div class="dashboard-content-create">
-          <p>Add Retailer Flow</p>
-          <form id="retailerForm">
-            <input type="text" id="retailerLocation" placeholder="Store Location" required>
-            <textarea id="retailerContent" placeholder="Product Display Info"></textarea>
-            <button type="submit">Add Retailer Flow</button>
-          </form>
+        <div class="dashboard-content-cr">
+          <div class="dashboard-content-create">
+            <p>Add Retailer Flow</p>
+            <form id="retailerForm">
+              <input type="text" id="retailerLocation" placeholder="Store Location" required>
+              <textarea id="retailerContent" placeholder="Product Display Info"></textarea>
+              <button type="submit">Add Retailer Flow</button>
+            </form>
+          </div>
         </div>
       </div>
   `,
@@ -297,10 +327,3 @@ const worker = document.querySelector(".worker");
 function workerShow() {
   worker.style.display = "flex";
 }
-
-// Show tracker (consumer's content)
-// const consumerBtn = document.getElementById("consumer-btn");
-// const consumer = document.querySelector(".consumer");
-// consumerBtn.addEventListener("click", () => {
-//   consumer.style.display = "flex";
-// });

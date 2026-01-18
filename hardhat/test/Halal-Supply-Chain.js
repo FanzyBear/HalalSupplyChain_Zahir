@@ -1,8 +1,10 @@
+// Import assertion library (Chai) and Hardhat's ethers
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("HalalSupplyChain", function () {
   let Halal, halal;
+  // Test accounts (signers)
   let owner, farmer, slaughterer, distributor, retailer, unregistered;
 
   beforeEach(async function () {
@@ -18,13 +20,15 @@ describe("HalalSupplyChain", function () {
     await halal.connect(distributor).registerUser(3); // Distributor
     await halal.connect(retailer).registerUser(4); // Retailer
   });
-
+  
+  // USER REGISTRATION TEST
   it("should register users correctly", async function () {
     const farmerInfo = await halal.users(farmer.address);
     expect(farmerInfo.isRegistered).to.be.true;
     expect(farmerInfo.role).to.equal(1); // Farmer role
   });
 
+  // BATCH CREATION TEST
   it("should allow farmer to create a batch", async function () {
     await halal.connect(farmer).initialiseBatch("Farm A", "Chicken");
     const batchStatus = await halal.getBatchStatus(0);
@@ -32,6 +36,7 @@ describe("HalalSupplyChain", function () {
     expect(batchStatus.currentOwner).to.equal(farmer.address);
   });
 
+  // SLAUGHTER FLOW TEST
   it("should allow slaughterer to add slaughter flow", async function () {
     await halal.connect(farmer).initialiseBatch("Farm A", "Chicken");
 
@@ -50,12 +55,14 @@ describe("HalalSupplyChain", function () {
     expect(batchStatus.isHalalCertified).to.be.true;
   });
 
+  // ACCESS CONTROL TEST
   it("should prevent non-registered users from interacting", async function () {
   await expect(
     halal.connect(unregistered).initialiseBatch("Farm A", "Chicken")
   ).to.be.revertedWith("Only farmer allowed");
   });
 
+  // FULL SUPPLY CHAIN FLOW TEST
   it("should follow the full supply chain flow", async function () {
     await halal.connect(farmer).initialiseBatch("Farm A", "Chicken");
 
