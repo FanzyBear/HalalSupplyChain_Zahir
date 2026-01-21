@@ -74,7 +74,7 @@ describe("HalalSupplyChain", function () {
       "Halal Cert Body",
       "HALAL123",
       Math.floor(Date.now() / 1000)
-    );
+    );  
 
     await halal.connect(distributor).addDistributorFlow(0, "Distributor A", "Shipped to Market");
     await halal.connect(retailer).addRetailerFlow(0, "Retailer A", "Ready for Sale");
